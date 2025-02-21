@@ -44,7 +44,7 @@ The value classication of CMC Fear and Greed.
 string <date>
 Timestamp (ISO 8601) of the last time this record was updated.
 
-For comprehensive analysis, these are the endpoints: [historical, latest]
+When you are asked for fear and greed index, you should use the following endpoints: [historical, latest].
 
                 Use this information to provide comprehensive market sentiment analysis.
                 `,
@@ -178,7 +178,7 @@ For comprehensive analysis, these are the endpoints: [historical, latest]
                                             },
                                             data: {
                                                 type: "object",
-                                                description: "The trending topics data from CoinMarketCap"
+                                                description: "The fear and greed index data from CoinMarketCap"
                                             }
                                         }
                                     }
