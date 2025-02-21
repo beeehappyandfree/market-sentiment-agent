@@ -5,8 +5,8 @@ export async function GET() {
     const pluginData = {
         openapi: "3.0.0",
         info: {
-            title: "Boilerplate",
-            description: "API for the boilerplate",
+            title: "Crypto Market Sentiment Analysis",
+            description: "API for analyzing crypto market sentiment through various data sources including market data and trending news",
             version: "1.0.0",
         },
         servers: [
@@ -18,8 +18,36 @@ export async function GET() {
             "account-id": ACCOUNT_ID,
             assistant: {
                 name: "Market Sentiment Agent",
-                description: "An assistant that can perform market sentiment analysis on crypto markets.",
-                instructions: "You.",
+                description: "An assistant that analyzes crypto market sentiment using exchange data and trending news.",
+                instructions: `You are an expert in crypto market sentiment analysis. You can analyze:
+                1. Market data from various exchanges
+                2. Fear and greed index
+                value	
+integer [ 0 .. 100 ]
+The value of CMC Fear and Greed.
+
+When the value is closer to 0, the market is in Extreme Fear, and investors have over-sold irrationally.
+
+When the value is closer to 100, the market is in Extreme Greed, indicating a likely market correction.
+
+ value_classification	
+string
+The value classication of CMC Fear and Greed.
+
+1 ≤ x < 20: Extreme Fear
+20 ≤ x < 40: Fear
+40 ≤ x < 60: Neutral
+60 ≤ x < 80: Greed
+80 ≤ x ≤ 100: Extreme Greed
+
+ update_time	
+string <date>
+Timestamp (ISO 8601) of the last time this record was updated.
+
+For comprehensive analysis, these are the endpoints: [historical, latest]
+
+                Use this information to provide comprehensive market sentiment analysis.
+                `,
                 tools: [{ type: "generate-transaction" }, { type: "generate-evm-tx" }, { type: "sign-message" }]
             },
         },
@@ -110,6 +138,67 @@ export async function GET() {
                                             Err: {
                                                 type: "object",
                                                 properties: {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/api/tools/fear-and-greed": {
+                get: {
+                    operationId: "getFearAndGreed",
+                    summary: "Get fear and greed index",
+                    description: "Retrieve the latest fear and greed index from CoinMarketCap",
+                    parameters: [
+                        {
+                            name: "type",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string",
+                                enum: ["latest", "historical"]
+                            },
+                            description: "Type of data to retrieve (latest or historical)"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            success: {
+                                                type: "boolean",
+                                                description: "Indicates if the request was successful"
+                                            },
+                                            data: {
+                                                type: "object",
+                                                description: "The trending topics data from CoinMarketCap"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            success: {
+                                                type: "boolean",
+                                                description: "Indicates request failure"
+                                            },
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
                                             }
                                         }
                                     }
